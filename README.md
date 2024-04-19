@@ -6,7 +6,7 @@ npm install -g @vue/cli
 ```
 ## VUE CLI에서 프로젝트 생성
 ```
-vue create vue-with-typescript
+npm create vue@latest
 ```
 ## 실행
 ```
