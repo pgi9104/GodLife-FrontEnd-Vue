@@ -11,7 +11,7 @@ class userService {
   getUserInfo(): Promise<any> {
     return axios({
       method: 'post',
-      url: process.env.VUE_APP_AUTH_URL+'/api/userinfo',
+      url: 'http://localhost:8080/api/userinfo',
       headers: {
         "Content-type": "application/json",
         "Authorization": useTokenStore().storeToken?.getToken(),

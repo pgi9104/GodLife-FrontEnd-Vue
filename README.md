@@ -4,6 +4,10 @@ frontVue
 ```
 npm install -g @vue/cli
 ```
+## 전역환경변수를 설정하기 위한 dotenv
+```
+npm install dotenv
+```
 ## 테스트
 ```
 npm install jest

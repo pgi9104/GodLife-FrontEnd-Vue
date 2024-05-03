@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-vue": "^2.23.1",
     "bootstrap-vue-3": "^0.3.12",
+    "dotenv": "^16.4.5",
     "jest": "^29.7.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.23",

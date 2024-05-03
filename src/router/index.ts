@@ -1,5 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
+import MenuView from '@/views/menu/MenuView.vue'
+import AboutView from '@/views/AboutView.vue'
+import LoginView from '@/views/loginView.vue'
+import RedirectView from '@/views/RedirectView.vue'
+import OracleView from '@/views/database/OracleView.vue'
+import MssqlView from '@/views/database/MssqlView.vue'
+import PostgresView from '@/views/database/PostgresView.vue'
+import MysqlView from '@/views/database/MysqlView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,18 +20,49 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue')
+      component: AboutView
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/loginView.vue')
+      component: LoginView
     },
     {
       path: '/token',
       name: 'token',
-      component: () => import('../views/RedirectView.vue')
+      component: RedirectView
     },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: MenuView
+    },
+    {
+      path: '/database',
+      name: 'DataBase',
+      children: [
+        {
+          path: '/database/oracle',
+          name: 'Oracle',
+          component: OracleView
+        },
+        {
+          path: '/database/mssql',
+          name: 'Mssql',
+          component: MssqlView
+        },
+        {
+          path: '/database/postgres',
+          name: 'Postgres',
+          component: PostgresView
+        },
+        {
+          path: '/database/mysql',
+          name: 'Mysql',
+          component: MysqlView
+        },
+      ]
+    }
   ]
 })
 
