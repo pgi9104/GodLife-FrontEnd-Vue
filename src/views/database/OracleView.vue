@@ -168,15 +168,48 @@
             <input class="form-control" type="text" name="restoreDBPW" id="restoreDBPW">
             <label class="form-label" for="restoreDBPW">복원을 실행할 비밀번호를 입력해주세요.</label>
           </div>
-          <label>복원 데이터베이스</label>
+          <label>복원 테이블 스페이스</label>
           <div class="form-floating">
-            <input class="form-control" type="text" name="restoreDBName" id="restoreDBName">
-            <label class="form-label" for="restoreDBName">복원을 할 데이터베이스명을 입력해주세요.</label>
+            <input class="form-control" type="text" name="restoreDBTablespace" id="restoreDBTablespace">
+            <label class="form-label" for="restoreDBTablespace">복원을 할 테이블스페이스명을 입력해주세요.</label>
           </div>
-          <label>복원 경로</label>
+          <label>복원 파일 경로</label>
           <div class="form-floating">
             <input class="form-control" type="text" name="restoreDBPath" id="restoreDBPath">
             <label class="form-label" for="restoreDBPath">데이터베이스를 복원할 경로 및 파일명을 입력해주세요.</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="dumpDBImpdp" name="dumpDBImpdp">
+            <label class="form-check-label" for="dumpDBImpdp">IMPDP를 사용하시겠습니까?</label>
+            <div class="hideDiv">
+              <label>복원 SID</label>
+              <div class="form-floating">
+                <div class="form-floating">
+                  <input class="form-control" type="text" name="restoreDBSID" id="restoreDBSID">
+                  <label class="form-label" for="restoreDBSID">테이블스페이스를 백업할 SID를 입력해주세요.</label>
+                </div>
+              </div>
+              <label>로그 파일 경로</label>
+              <div class="form-floating">
+                <input class="form-control" type="text" name="restoreLogFile" id="restoreLogFile">
+                <label class="form-label" for="restoreLogFile">로그 파일 경로를 지정해주세요.</label>
+              </div>
+              <label>백업 파일의 스키마</label>
+              <div class="form-floating">
+                <input class="form-control" type="text" name="backupDBSchema" id="backupDBSchema">
+                <label class="form-label" for="backupDBSchema">백업 파일의 스키마를 지정해주세요.</label>
+              </div>
+              <label>복원 테이블스페이스 스키마</label>
+              <div class="form-floating">
+                <input class="form-control" type="text" name="restoreDBSchema" id="restoreDBSchema">
+                <label class="form-label" for="restoreDBSchema">복원 할 테이블스페이스의 스키마</label>
+              </div>
+              <label>백업 파일의 테이블 스페이스</label>
+              <div class="form-floating">
+                <input class="form-control" type="text" name="backupDBTablespace" id="backupDBTablespace">
+                <label class="form-label" for="backupDBTablespace">백업 파일의 테이블 스페이스를 지정해주세요.</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -205,9 +238,6 @@
 </style>
 
 <script lang="ts">
-import { OracleCommandBuilder } from '@/api/cmd/types/oracle';
-
-
 export default {
   data:() => {
     return {
@@ -287,18 +317,20 @@ export default {
         let restoreDBUser = this.value('restoreDBUser');
         let restoreDBPW = this.value('restoreDBPW');
         let restoreDBSID = this.value('restoreDBSID');
-        let dumpfile = this.value('dumpfile');
-        let logfile = this.value('logfile');
+        let restoreDBPath = this.value('restoreDBPath');
+        let restoreLogFile = this.value('restoreLogFile');
         let backupDBSchema = this.value('backupDBSchema');
         let restoreDBSchema = this.value('restoreDBSchema');
         let backupDBTablespace = this.value('backupDBTablespace');
         let restoreDBTablespace = this.value('restoreDBTablespace');
-        result += "\nimpdp "+restoreDBUser+"/"+restoreDBPW+"@"+restoreDBSID
-                    +" dumpfile="+dumpfile
-                    +" logfile="+logfile
-                    +" remap_schema="+backupDBSchema+":"+restoreDBSchema
-                    +" remap_tablespace="+backupDBTablespace+":"+restoreDBTablespace
-                    +";";
+        if(this.isChecked('dumpDBImpdp')){
+          result += "\nimpdp "+restoreDBUser+"/"+restoreDBPW+"@"+restoreDBSID
+                      +" dumpfile="+restoreDBPath
+                      +(restoreLogFile != ''? " logfile="+restoreLogFile: "")
+                      +(backupDBSchema != '' && restoreDBSchema != ''? " remap_schema="+backupDBSchema+":"+restoreDBSchema:"")
+                      +(backupDBTablespace != '' && restoreDBTablespace != ''? " remap_tablespace="+backupDBTablespace+":"+restoreDBTablespace:"")
+                      +";";
+        }
 			}
 			
       this.resultTxt = result;
