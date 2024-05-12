@@ -134,7 +134,7 @@
 </div>
 </template>
 
-<style>
+<style scoped>
 	.form-switch .form-check-input:checked~.hideDiv{
 		display:block;
 	}

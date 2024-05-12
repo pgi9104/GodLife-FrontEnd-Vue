@@ -1,8 +1,140 @@
-<style scoped>
+<template>
+  <div class="min-width">
+    <header>
+
+    </header>
+  
+    <nav class="navbar navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">{{ title }}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">{{ title }}</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <form class="d-flex mt-3" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-success" type="submit">Search</button>
+            </form>
+            <div id="menu">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <RouterView id="main"/>
+  </div >
+</template>
+
+<script lang="ts">
+import { RouterView } from 'vue-router'
+import { callAPI, Http } from './utils/common';
+
+export default {
+  data: () => {
+    return {
+      authServer: import.meta.env.VITE_APP_AUTH_URI,
+      title: "슬기로운 개발자 생활",
+      routeList: []
+    };
+  },
+  methods: {
+    makeMenu(upMenu: HTMLDivElement, data: any){
+      let childrenCount = data.children.length;
+      let level = data.level;
+      let separeteText = '';
+      if(level> 0){
+        separeteText = 'ㄴ';
+      }
+
+      if(childrenCount > 0){
+        let div =  document.createElement('DIV') as HTMLDivElement;
+        let check = document.createElement('INPUT') as HTMLInputElement;
+        let label = document.createElement('LABEL') as HTMLLabelElement;
+        let child = document.createElement('DIV') as HTMLDivElement;
+
+        check.type = 'CHECKBOX';
+        check.id = data.menuCd;
+        check.name = data.menuCd;
+        label.htmlFor = data.menuCd;
+        label.textContent = separeteText+ data.menuName +"("+childrenCount+")";
+        child.classList.add('childrenMenu');
+        child.classList.add('row');
+
+        div.appendChild(check);
+        div.appendChild(label);
+        div.appendChild(child);
+        upMenu.append(div);
+        upMenu.classList.add('parentMenu');
+        upMenu.classList.add('row');
+
+        data.children.forEach((item: any)=>{
+          this.makeMenu(child, item);
+        });
+      }else{
+        let label = document.createElement('LABEL') as HTMLLabelElement;
+        let li = document.createElement('LI') as HTMLLIElement;
+        let a = document.createElement('A') as HTMLAnchorElement;
+        
+        label.htmlFor=data.menuCd;
+        label.textContent = separeteText + data.menuName;
+        a.href=data.url;
+        a.id = data.menuCd;
+        
+        a.appendChild(label);
+        li.appendChild(a);
+        upMenu.appendChild(li);
+      }
+    }, getMenu(){
+      let http = new Http();
+      http.setParam(null);
+      http.setUrl(this.authServer+'/api/menu/menuRoot.ajax');
+      http.get();
+      http.setSuccess((data: any)=>{
+        this.makeMenu(document.getElementById("menu") as HTMLDivElement, data.menuRoot);
+      });
+      callAPI(http);
+    }
+  }, mounted(){
+    this.getMenu();
+  }
+}
+</script>
+
+<style>
 
 #main {
   margin-top: 20px;
 }
+
+.parentMenu{
+  display: flex;
+  flex-direction: column;
+}
+
+#menu INPUT[TYPE="CHECKBOX"]{
+  display: none;
+}
+
+
+#menu INPUT[TYPE="CHECKBOX"]:checked~.childrenMenu{
+  content:"s";
+  display:block;
+}
+
+.childrenMenu{
+  display:none;
+}
+
+.parentMenu li{
+  list-style-type : none 
+}
+
 
 @media (min-width: 360px) {
   /* 모바일 */
@@ -88,120 +220,3 @@
   }
 }
 </style>
-
-<template>
-  <div class="min-width">
-    <header>
-
-    </header>
-  
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">{{ title }}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
-          <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">{{ title }}</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body">
-            <form class="d-flex mt-3" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-success" type="submit">Search</button>
-            </form>
-            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" id="menu">
-              
-            </ul>
-          </div>
-        </div>
-      </div>
-    </nav>
-    <RouterView id="main"/>
-  </div >
-</template>
-
-<script lang="ts">
-import { RouterView } from 'vue-router'
-import { Menu, MenuBuilder } from './api/menu/types/menu';
-
-export default {
-  data: () => {
-    return {
-      title: "슬기로운 개발자 생활",
-      routeList: [
-        new MenuBuilder().path("/").name("HOME").build(),
-        new MenuBuilder().path("/about").name("ABOUT").build(),
-        new MenuBuilder().path("/opensource").name("OpenSource")
-          .addChild(new MenuBuilder().path(import.meta.env.VITE_APP_REDMINE_URI as string).name("RedMine").build())
-          .addChild(new MenuBuilder().path(import.meta.env.VITE_APP_GRAFANA_URI as string).name("Grafana").build())
-          .addChild(new MenuBuilder().path(import.meta.env.VITE_APP_GITLAB_URI as string).name("Gitlab").build())
-          .addChild(new MenuBuilder().path(import.meta.env.VITE_APP_HARBOR_URI as string).name("Harbor").build())
-          .addChild(new MenuBuilder().path(import.meta.env.VITE_APP_JENKINS_URI as string).name("Jenkins").build())
-          .build(),
-        new MenuBuilder().path("/database").name("DATABASE")
-          .addChild(new MenuBuilder().path("/database/oracle").name("Oracle").build())
-          .addChild(new MenuBuilder().path("/database/mysql").name("Mysql").build())
-          .addChild(new MenuBuilder().path("/database/mssql").name("Mssql").build())
-          .addChild(new MenuBuilder().path("/database/postgres").name("Postgres").build())
-          .build()
-      ]
-    };
-  },
-  methods: {
-    makeMenu(upMenu: HTMLUListElement, menus: Menu[]){
-      // 라우팅의 매핑여부를 확인하는 유효성체크
-      if(upMenu == null || !(upMenu instanceof HTMLUListElement) ) return console.log('is Not Valid parents');
-      if(menus.length < 0) return console.log('menuList is Empty');
-
-      menus.forEach(menu => {
-        let children = menu.getChildren() as Menu[];
-        let hasChildren = typeof children !== 'undefined' && children != null && children.length > 0;
-
-        let li = document.createElement('li');
-        li.className = 'nav-item';
-
-        if(hasChildren){
-          li.className = 'nav-item dropdown';
-
-          let a = document.createElement('a');
-          a.className='nav-link dropdown-toggle';
-          if(a instanceof HTMLAnchorElement){
-            a.href='#';
-            a.setAttribute('data-bs-toggle', 'dropdown');
-            a.ariaExpanded = 'false';
-            a.role='butten';
-            a.textContent=menu.getName();
-          }
-
-          let ul = document.createElement('ul');
-          ul.className = 'dropdown-menu dropdown-menu-dark';
-
-          li.appendChild(a);
-          li.appendChild(ul);
-
-          this.makeMenu(ul, children);
-        } else {
-          let routerLink = document.createElement('a');
-          routerLink.className = 'nav-link';
-          routerLink.textContent = menu.getName();
-          routerLink.href=menu.getPath();
-          routerLink.ariaCurrent='page';
-
-          li.appendChild(routerLink);      
-        }
-
-        upMenu.appendChild(li);
-      })
-    },
-
-    getId(id:string){
-      return document.getElementById(id);
-    }
-  },
-  mounted(){
-      this.makeMenu(this.getId('menu') as HTMLUListElement, this.routeList as Menu[]);
-  }
-}
-</script>

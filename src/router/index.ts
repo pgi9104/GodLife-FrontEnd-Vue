@@ -4,10 +4,10 @@ import MenuView from '@/views/menu/MenuView.vue'
 import AboutView from '@/views/AboutView.vue'
 import LoginView from '@/views/loginView.vue'
 import RedirectView from '@/views/RedirectView.vue'
-import OracleView from '@/views/database/OracleView.vue'
-import MssqlView from '@/views/database/MssqlView.vue'
-import PostgresView from '@/views/database/PostgresView.vue'
-import MysqlView from '@/views/database/MysqlView.vue'
+import OracleView from '@/views/script/database/OracleView.vue'
+import MssqlView from '@/views/script/database/MssqlView.vue'
+import PostgresView from '@/views/script/database/PostgresView.vue'
+import MysqlView from '@/views/script/database/MysqlView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
