@@ -4,6 +4,10 @@ frontVue
 ```
 npm install -g @vue/cli
 ```
+## diagram을 위한 Mermaid
+```
+npm install mermaid
+```
 ## 전역환경변수를 설정하기 위한 dotenv
 ```
 npm install dotenv
