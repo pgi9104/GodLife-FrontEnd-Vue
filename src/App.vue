@@ -47,10 +47,6 @@ export default {
     makeMenu(upMenu: HTMLDivElement, data: any){
       let childrenCount = data.children.length;
       let level = data.level;
-      let separeteText = '';
-      if(level> 0){
-        separeteText = 'ㄴ';
-      }
 
       if(childrenCount > 0){
         let div =  document.createElement('DIV') as HTMLDivElement;
@@ -62,7 +58,7 @@ export default {
         check.id = data.menuCd;
         check.name = data.menuCd;
         label.htmlFor = data.menuCd;
-        label.textContent = separeteText+ data.menuName +"("+childrenCount+")";
+        label.textContent = data.menuName +"("+childrenCount+")";
         child.classList.add('childrenMenu');
         child.classList.add('row');
 
@@ -82,7 +78,7 @@ export default {
         let a = document.createElement('A') as HTMLAnchorElement;
         
         label.htmlFor=data.menuCd;
-        label.textContent = separeteText + data.menuName;
+        label.textContent = data.menuName;
         a.href=data.url;
         a.id = data.menuCd;
         
@@ -123,12 +119,12 @@ export default {
 
 
 #menu INPUT[TYPE="CHECKBOX"]:checked~.childrenMenu{
-  content:"s";
-  display:block;
+  display: block;
 }
 
 .childrenMenu{
   display:none;
+  margin-left: 1%;
 }
 
 .parentMenu li{
