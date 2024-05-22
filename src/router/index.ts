@@ -8,6 +8,7 @@ import OracleView from '@/views/script/database/OracleView.vue'
 import MssqlView from '@/views/script/database/MssqlView.vue'
 import PostgresView from '@/views/script/database/PostgresView.vue'
 import MysqlView from '@/views/script/database/MysqlView.vue'
+import ProjectView from '@/views/project/ProjectView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,11 @@ const router = createRouter({
           component: MysqlView
         },
       ]
+    },
+    {
+      path: '/program/project',
+      name: 'Project',
+      component: ProjectView
     }
   ]
 })

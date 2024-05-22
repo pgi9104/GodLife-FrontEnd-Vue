@@ -60,7 +60,11 @@ export class HeaderInfo{
 	}
 
 	public setWidth(width: string): void{
-		this._width = width;
+		if(this._width == "*"){
+			this._width = "100%";
+		}else{
+			this._width = width;
+		}
 	}
 
 	public getHeight(): string {
@@ -304,25 +308,28 @@ export class TableBuilder{
 							checkbox.type = 'CHECKBOX';
 							checkbox.onclick = allCheck;
 						}else{
-							var input = mkElmt('INPUT') as HTMLInputElement;
+							var input = mkElmt('INPUT') as HTMLInputElement|HTMLLabelElement;
 							var dataType = self.getCellTypeByIndex(colIdx);
 							if(dataType == DataType.HIDDEN){
+								input = input as HTMLInputElement
 								input.type = 'TEXT';
 								input.value = headTxt;
 								input.setAttribute("disabled", 'disabled');
 								th.hidden = true;
 							}else if(dataType == DataType.CHECK){
+								input = input as HTMLInputElement
 								input.type = 'CHECKBOX';
 								input.onclick = allCheck;
 							}else{
-								input.type = 'TEXT';
-								input.value = headTxt;
-								input.setAttribute("disabled", 'disabled');
+								input = document.createElement('LABEL') as HTMLLabelElement;
+								input.textContent = headTxt;
 								th.appendChild(input);
 								th.hidden = false;
 							}
 							
 							input.style.width = '100%';
+							input.style.margin = 'auto';
+							input.style.padding = 'auto';
 							self.setAlign(colInfo[colIdx], th, input);
 							th.appendChild(input);
 						}
@@ -370,6 +377,7 @@ export class TableBuilder{
 	public setCell(header: HeaderInfo, idx: number, row: HTMLTableRowElement, data: any){
 		var cell = row.insertCell(idx) as HTMLTableCellElement;
 		cell.style.alignContent= "center";
+		cell.style.width = header.getWidth();
 		var child = mkElmt('INPUT') as HTMLInputElement;
 		this.setType(child, header);
 		this.setAlign(header, cell, child);
@@ -433,7 +441,7 @@ export class TableBuilder{
 			}
 			child.value = value;
 		}
-		child.style.width = header.getWidth();
+		child.style.width = header.getWidth() == '*' || header.getWidth() == '' || header.getWidth() == null ? '100%': header.getWidth();
 	}
 	
 	public getTbody(): HTMLTableSectionElement{

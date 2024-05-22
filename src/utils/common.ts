@@ -136,6 +136,24 @@ export class Http{
 		return this._httpMethods;
 	}
 
+	public method(method: string){
+		let type = method.toUpperCase().trim();
+		
+		if(type == "POST"){
+			this._httpMethods = HTTP_METHODS.POST;
+		}else if(type == "PATCH"){
+			this._httpMethods = HTTP_METHODS.PATCH;
+		}else if(type == "DELETE"){
+			this._httpMethods = HTTP_METHODS.DELETE;
+		}else if(type == "PUT"){
+			this._httpMethods = HTTP_METHODS.PUT;
+		}else {
+			this._httpMethods = HTTP_METHODS.GET;
+		}
+
+		return this;
+	}
+
 	public get(){
 		this._httpMethods = HTTP_METHODS.GET;
 		return this;
@@ -209,14 +227,16 @@ export function callAPI(http: Http){
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function(){
 		if(xhr.readyState === XMLHttpRequest.DONE){
+			let data = null;
+
 			if(xhr.status === 200){
-				var data = null;
 				if(isNotEmpty(xhr.responseText)){
 					data = JSON.parse(xhr.responseText);
 				}
 				let success = http.getSeccess();
 				success(data);
 			}else{
+				data = xhr.responseText;
 				let fail = http.getFail();
 				fail(data);				
 			}
