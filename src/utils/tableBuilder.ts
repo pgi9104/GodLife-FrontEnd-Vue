@@ -549,6 +549,15 @@ export class TableBuilder{
 		this.disabledCell(rowIdx, this.getColIndex(cellId));
 	}
 	
+	public isDisabledCell(rowIdx: number, cellIdx: number):boolean {
+		return (this.getCell(rowIdx, cellIdx).firstChild as HTMLInputElement|HTMLTextAreaElement).disabled;
+	}
+
+	public isDisabledCellById(rowIdx: number, cellId: string):boolean {
+		let cellIdx = this.idToIndex.get(cellId) as number;
+		return this.isDisabledCell(rowIdx, cellIdx);
+	}
+
 	/**
 		writer	: gyuil
 		date	: 2023-07-22
@@ -695,5 +704,9 @@ export class TableBuilder{
 		btn.setAttribute("target", '_blank');
 		btn.onclick=fn;
 		this.setCellChild(rowIdx, cellIdx, btn);
+	}
+
+	public deleteRow(rowIdx: number): void{
+		this.getTbody().deleteRow(rowIdx);
 	}
 }

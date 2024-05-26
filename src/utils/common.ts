@@ -229,7 +229,7 @@ export function callAPI(http: Http){
 		if(xhr.readyState === XMLHttpRequest.DONE){
 			let data = null;
 
-			if(xhr.status === 200){
+			if(xhr.status >= 200 && xhr.status < 300 && xhr.status != 204){
 				if(isNotEmpty(xhr.responseText)){
 					data = JSON.parse(xhr.responseText);
 				}
