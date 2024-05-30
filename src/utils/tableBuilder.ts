@@ -548,11 +548,27 @@ export class TableBuilder{
 	public disabledCellById(rowIdx: number, cellId: string): void{
 		this.disabledCell(rowIdx, this.getColIndex(cellId));
 	}
-	
+	/**
+		writer	: gyuil
+		date	: 2023-05-28
+		목적		: 테이블의 값의 비활성화 여부 확인
+		파라미터 : {
+			rowIdx	: 행의 인덱스
+			cellIdx : 열의 인덱스
+		}
+	 */
 	public isDisabledCell(rowIdx: number, cellIdx: number):boolean {
 		return (this.getCell(rowIdx, cellIdx).firstChild as HTMLInputElement|HTMLTextAreaElement).disabled;
 	}
-
+	/**
+		writer	: gyuil
+		date	: 2023-05-28
+		목적		: 테이블의 값의 비활성화 여부 확인
+		파라미터 : {
+			rowIdx	: 행의 인덱스
+			cellId : 열의 식별자
+		}
+	 */
 	public isDisabledCellById(rowIdx: number, cellId: string):boolean {
 		let cellIdx = this.idToIndex.get(cellId) as number;
 		return this.isDisabledCell(rowIdx, cellIdx);
@@ -679,7 +695,16 @@ export class TableBuilder{
 	
 		this.setCellChild(rowIdx, cellIdx, btn);
 	}
-	
+	/**
+		작성자	: gyuil
+		목적		: 팝업창 열기
+		파라미터 : {
+			rowIdx	: row의 인덱스
+			cellId  : cell의 id
+			btnName : 버튼명
+			fn		: 버튼을 클릭시 수행되는 함수
+		}
+	 */	
 	public getBtnPopById(rowIdx: number, cellId: string, btnName:string, fn: any): void{
 		var cell = this.getBtnPop(rowIdx, this.getIdToIndex().get(cellId) as number, btnName, fn);
 	}
@@ -705,7 +730,13 @@ export class TableBuilder{
 		btn.onclick=fn;
 		this.setCellChild(rowIdx, cellIdx, btn);
 	}
-
+	/**
+		작성자	: gyuil
+		목적		: 특정 행 삭제
+		파라미터 : {
+			rowIdx	:  row의 인덱스
+		}
+	 */
 	public deleteRow(rowIdx: number): void{
 		this.getTbody().deleteRow(rowIdx);
 	}
