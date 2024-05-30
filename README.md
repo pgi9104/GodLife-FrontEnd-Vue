@@ -16,6 +16,10 @@ npm install dotenv
 ```
 npm install jest
 ```
+## pinia 로컬스토리지
+```
+npm i pinia-plugin-persistedstate
+```
 ## VUE CLI에서 프로젝트 생성
 ```
 npm create vue@latest

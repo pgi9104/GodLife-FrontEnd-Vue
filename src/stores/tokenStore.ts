@@ -1,19 +1,17 @@
-import { defineStore } from 'pinia'
-import { AccessToken } from '../api/token/types/token'
+import { defineStore, mapActions } from 'pinia'
 
 export const useTokenStore = defineStore('token', {
-  state: () => ({
-    storeToken: null as AccessToken | null,
-  }),
+  state: () => {
+    return { storeToken: '' }
+  },
   getters: {
-    getToken: (state) => {
-      return state.storeToken;
-    },
+    token: (state) => state.storeToken,
   },
   actions: {
-    createToken(token: string): void{
-      let access = new AccessToken(token);
-      this.$state.storeToken = access;
+    createToken(token: string) {
+      console.log("add Token: "+token);
+      this.storeToken = token;
     }
-  }
+  },
+  persist: true,
 });
