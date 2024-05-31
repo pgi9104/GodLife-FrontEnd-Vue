@@ -9,6 +9,7 @@ import MssqlView from '@/views/script/database/MssqlView.vue'
 import PostgresView from '@/views/script/database/PostgresView.vue'
 import MysqlView from '@/views/script/database/MysqlView.vue'
 import ProjectView from '@/views/project/ProjectView.vue'
+import CommonCodeView from '@/views/sys/comm/code/CommonCodeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,9 +35,14 @@ const router = createRouter({
       component: RedirectView
     },
     {
-      path: '/menu',
+      path: '/sys/menu',
       name: 'menu',
       component: MenuView
+    },
+    {
+      path: '/sys/comm/code',
+      name: 'commonCode',
+      component: CommonCodeView
     },
     {
       path: '/database',
@@ -65,7 +71,7 @@ const router = createRouter({
       ]
     },
     {
-      path: '/program/project',
+      path: '/sys/program/project',
       name: 'Project',
       component: ProjectView
     }

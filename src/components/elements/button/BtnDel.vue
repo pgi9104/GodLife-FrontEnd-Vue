@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseBtn from './BaseBtn.vue';
-
-const btnName = "삭제";
+import { msgStore } from '@/stores/msgStore'
+const btnName = msgStore().globalMsg.getCodeValue('COMM.BTN.DEL');
 </script>
 
 <template>

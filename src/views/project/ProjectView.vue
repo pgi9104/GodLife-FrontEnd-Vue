@@ -3,7 +3,7 @@
 	<CommonHeader :menuName="state.menuName" :add :get :del :save/>
 	<BaseTable :id="gridId">
 	</BaseTable>
-</div>
+  </div>
 </template>
 
 <style>

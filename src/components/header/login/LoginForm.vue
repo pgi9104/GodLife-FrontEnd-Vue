@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseModal from '@/components/common/modal/BaseModal.vue'
+
 const modalId = 'loginModal';
 
 const showModal = () => {
@@ -17,7 +17,7 @@ const hideModal=() => {
 <button v-on:click="showModal" >Login</button>
 
 <!-- The Modal -->
-<div :id=modalId class="modal">
+<div :id=modalId class="modal login">
   <!-- Modal Content -->
   <form class="modal-content animate" action="/action_page.php">
     <span v-on:click="hideModal" class="close" title="Close Modal">&times;</span>
@@ -71,6 +71,27 @@ const hideModal=() => {
 .modal span.psw {
   float: right;
   padding-top: 16px;
+}
+
+/* Full-width inputs */
+.modal+.login input[type=text], input[type=password] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+.modal+.login button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
 }
 
 /* Change styles for span and cancel button on extra small screens */

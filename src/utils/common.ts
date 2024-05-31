@@ -95,6 +95,8 @@ export enum HTTP_METHODS{
 
 export enum HTTP_CONTENT_TYPE {
 	JSON = "application/json;charset=UTF-8",
+	APP_FORM_URLENCODED = "application/x-www-form-urlencoded",
+	MULTIPART_FORM_DATA_VALUE = "multipart/form-data",
 }
 
 export class Http{
@@ -105,7 +107,7 @@ export class Http{
 	_failFunction: Function = function(){};
 	_headers: Map<string, string> = new Map<string, string>();
 	_async: boolean = false;
-	_contentType: HTTP_CONTENT_TYPE = HTTP_CONTENT_TYPE.JSON;
+	_contentType: HTTP_CONTENT_TYPE | string = HTTP_CONTENT_TYPE.JSON;
 
 	constructor(){
 		this.addHeader('content-type', HTTP_CONTENT_TYPE.JSON);
@@ -218,8 +220,23 @@ export class Http{
 		return this._contentType;
 	}
 
+	public setContentType(contentType: string){
+		this._contentType = contentType;
+	}
+
 	public contentTypeJson(){
+		this._contentType = HTTP_CONTENT_TYPE.JSON;
 		this.addHeader('content-type', HTTP_CONTENT_TYPE.JSON);
+	}
+	
+	public contentTypeAppFormUrlEncoded(){
+		this._contentType = HTTP_CONTENT_TYPE.APP_FORM_URLENCODED;
+		this.addHeader('content-type', HTTP_CONTENT_TYPE.APP_FORM_URLENCODED);
+	}
+
+	public contentTypeFormData(){
+		this._contentType = HTTP_CONTENT_TYPE.MULTIPART_FORM_DATA_VALUE;
+		this.addHeader('content-type', HTTP_CONTENT_TYPE.MULTIPART_FORM_DATA_VALUE);
 	}
 }
 

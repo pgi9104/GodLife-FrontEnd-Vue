@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import BaseBtn from './BaseBtn.vue';
-const btnName="추가";
+import { msgStore } from '@/stores/msgStore'
 </script>
 
 <template>
-  <BaseBtn :btn-name="btnName"></BaseBtn>
+  <BaseBtn :btn-name="msgStore().globalMsg.getCodeValue('COMM.BTN.ADD')"></BaseBtn>
 </template>
 
 <style>
