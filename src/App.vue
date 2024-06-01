@@ -12,12 +12,15 @@
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { callAPI, Http } from './utils/common';
 import HeaderComponent from '@/components/header/HeaderComponent.vue'
 import Nav from '@/components/nav/Nav.vue'
 import { onMounted, reactive } from 'vue';
+import { useTokenStore } from './stores/tokenStore';
 
+const router = useRouter();
+const token = useTokenStore();
 const state = reactive({
   authServer: import.meta.env.VITE_APP_AUTH_URI,
   title: "Portfolio",
@@ -59,8 +62,10 @@ const makeMenu: any = (upMenu: HTMLDivElement, data: any) => {
     
     label.htmlFor=data.menuCd;
     label.textContent = data.menuName;
-    a.href=data.url;
     a.id = data.menuCd;
+    a.onclick = () =>{
+      router.push((data.url as string));
+    }
     
     a.appendChild(label);
     li.appendChild(a);
