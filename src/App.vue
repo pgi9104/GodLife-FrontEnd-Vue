@@ -26,7 +26,6 @@ const state = reactive({
 
 const makeMenu: any = (upMenu: HTMLDivElement, data: any) => {
   let childrenCount = data.children.length;
-  let level = data.level;
 
   if(childrenCount > 0){
     let div =  document.createElement('DIV') as HTMLDivElement;
@@ -37,6 +36,7 @@ const makeMenu: any = (upMenu: HTMLDivElement, data: any) => {
     check.type = 'CHECKBOX';
     check.id = data.menuCd;
     check.name = data.menuCd;
+    check.checked=true;
     label.htmlFor = data.menuCd;
     label.textContent = data.menuName +"("+childrenCount+")";
     child.classList.add('childrenMenu');
@@ -71,6 +71,7 @@ const makeMenu: any = (upMenu: HTMLDivElement, data: any) => {
 const getMenu = () => {
   let http = new Http();
   http.setParam(null);
+  http.addHeader("Authorization","Bearer "+token.storeToken);
   http.setUrl(state.authServer+'/api/menu/menuRoot.ajax');
   http.get();
   http.setSuccess((data: any)=>{
