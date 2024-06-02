@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
-const modalId = 'loginModal';
+const modalId = 'modalSignin';
+
+const githubLoginUrl = import.meta.env.VITE_APP_AUTH_URI+"/oauth2/authorization/github?redirect_uri="+import.meta.env.VITE_APP_SERVER_URI+"/token";
 
 const showModal = () => {
   (document.getElementById(modalId) as HTMLDivElement).style.display="block";
@@ -13,37 +15,51 @@ const hideModal=() => {
 </script>
 
 <template>
-<!-- Button to open the modal login form -->
-<button v-on:click="showModal" >Login</button>
+  <!-- Button to open the modal login form -->
+  <button v-on:click="showModal" >Login</button>
+  
+  <!-- The Modal -->
+  <main>
+    <div class="modal" tabindex="-1" role="dialog" :id=modalId>
+      <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-4 shadow">
+          <div class="modal-header p-5 pb-4 border-bottom-0">
+            <span v-on:click="hideModal" class="close" title="Close Modal">&times;</span>
+            <h1 class="fw-bold mb-0 fs-2">Sign up for free</h1>
+          </div>
 
-<!-- The Modal -->
-<div :id=modalId class="modal login">
-  <!-- Modal Content -->
-  <form class="modal-content animate" action="/action_page.php">
-    <span v-on:click="hideModal" class="close" title="Close Modal">&times;</span>
-    <div class="imgcontainer">
-      <img src="@/assets/logo.svg" alt="Avatar" class="avatar">
+          <div class="modal-body p-5 pt-0">
+            <form class="">
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+              </div>
+              <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign up</button>
+              <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
+              <hr class="my-4">
+              <h2 class="fs-5 fw-bold mb-3">Or use a third-party</h2>
+              <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="submit">
+                <svg class="bi me-1" width="16" height="16"><use xlink:href="#twitter"></use></svg>
+                Sign up with Twitter
+              </button>
+              <button class="w-100 py-2 mb-2 btn btn-outline-primary rounded-3" type="submit">
+                <svg class="bi me-1" width="16" height="16"><use xlink:href="#facebook"></use></svg>
+                Sign up with Facebook
+              </button>
+              <button class="w-100 py-2 mb-2 btn btn-outline-secondary rounded-3" type="submit">
+                <svg class="bi me-1" width="16" height="16"></svg>
+                <a class="oauth" :href=githubLoginUrl>Sign up with GitHub</a>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="container">
-      <label for="uname"><b>Username</b></label>
-      <input type="text" placeholder="Enter Username" name="uname" required>
-
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" required>
-
-      <button type="submit">Login</button>
-      <label>
-        <input type="checkbox" checked="true" name="remember"> Remember me
-      </label>
-    </div>
-
-    <div class="container" style="background-color:#f1f1f1">
-      <button type="button" class="cancelbtn" v-on:click="hideModal">Cancel</button>
-      <span class="psw">Forgot <a href="#">password?</a></span>
-    </div>
-  </form>
-</div>
+  </main>
 </template>
 
 <style>
