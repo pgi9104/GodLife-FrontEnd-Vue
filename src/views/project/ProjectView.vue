@@ -10,11 +10,12 @@
 </style>
 
 <script setup lang="ts">
-import { isNotEmpty, isEmpty, callAPI, Http } from '@/utils/common'
+import { isNotEmpty, isEmpty } from '@/utils/common'
 import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder } from '@/utils/tableBuilder';
 import CommonHeader from '@/components/common/header/CommonHeader.vue';
 import BaseTable from '@/components/table/BaseTable.vue';
 import { onMounted, reactive } from 'vue';
+import { Http, callAPI } from '@/utils/http';
 
 const gridId = 'projectGrid';
 

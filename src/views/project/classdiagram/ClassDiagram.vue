@@ -23,8 +23,9 @@
 </style>
 
 <script lang="ts">
-import { isNotEmpty, getId, isEmpty, callAPI, Http } from '@/utils/common'
+import { isNotEmpty, getId, isEmpty } from '@/utils/common'
 import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder } from '@/utils/tableBuilder';
+import { callAPI, Http } from '@/utils/http';
 
 export default{
 	data(){

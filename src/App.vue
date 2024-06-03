@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { RouterView, useRoute, useRouter } from 'vue-router'
-import { callAPI, Http } from './utils/common';
+import { callAPI, Http } from '@/utils/http';
 import HeaderComponent from '@/components/header/HeaderComponent.vue'
 import Nav from '@/components/nav/Nav.vue'
 import { onMounted, reactive } from 'vue';

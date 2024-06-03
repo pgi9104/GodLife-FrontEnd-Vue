@@ -17,11 +17,12 @@
 </style>
 
 <script setup lang="ts">
-import { isNotEmpty, getId, isEmpty, callAPI, Http } from '@/utils/common'
+import { isNotEmpty, isEmpty} from '@/utils/common'
 import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder } from '@/utils/tableBuilder';
 import { onMounted } from 'vue';
 import CommonHeader from '@/components/common/header/CommonHeader.vue';
 import BaseTable from '@/components/table/BaseTable.vue';
+import { callAPI, Http } from '@/utils/http';
 
 const gridId = 'menuGrid';
 

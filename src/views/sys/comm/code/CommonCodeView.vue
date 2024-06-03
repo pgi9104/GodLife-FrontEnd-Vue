@@ -22,12 +22,13 @@
 </style>
 
 <script setup lang="ts">
-import { isNotEmpty, getId, isEmpty, callAPI, Http } from '@/utils/common'
+import { isNotEmpty, getId, isEmpty} from '@/utils/common'
 import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder } from '@/utils/tableBuilder';
 import { onMounted } from 'vue';
 import CommonHeader from '@/components/common/header/CommonHeader.vue';
 import BaseTable from '@/components/table/BaseTable.vue';
 import { useTokenStore } from '@/stores/tokenStore';
+import { callAPI, Http } from '@/utils/http';
 
 const store = useTokenStore();
 const gridId = 'commonCodeGrid';
@@ -220,11 +221,11 @@ const save = () => {
 		updateList	: []
 	};
 	
-	let grid = initdata.gridDetail;
+	let grid = initdata.grid;
 
-	let list = grid.getRows();
+	let list = grid.getRows() as HTMLCollectionOf<HTMLTableRowElement>;
 	for(let idx =0; idx<list.length;idx++){
-		let status = (list[idx].children[2].children[0] as HTMLInputElement|HTMLTextAreaElement).value;
+		let status = grid.getCellValueById(idx,'status');
 		if(status == GRID_MSG.DELETE){
 			param.deleteList.push(grid.getRowData(idx));
 		}else if(status == GRID_MSG.INSERT){

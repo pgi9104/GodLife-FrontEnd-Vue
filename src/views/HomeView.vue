@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import {useTokenStore} from '../stores/tokenStore'
 
-console.log(useTokenStore().$state.storeToken);
-
+let store = useTokenStore();
+console.log(store.$state.storeToken);
+const token = store.$state.storeToken;
 </script>
 
 <template>
   <main>
-    hello
+    {{token}}
   </main>
 </template>

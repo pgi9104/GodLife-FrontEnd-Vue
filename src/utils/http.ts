@@ -188,3 +188,9 @@ export function callAPI(http: Http){
 
 	xhr.send(http.getParam());
 }
+
+export class LinkInfo {
+    href: string = '';
+    type: HTTP_METHODS = HTTP_METHODS.GET;
+    media: string = '';
+}
