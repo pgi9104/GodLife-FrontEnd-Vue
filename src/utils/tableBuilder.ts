@@ -7,12 +7,6 @@ import { isNotEmpty, isEmpty, getId, getTags, mkElmt , equalsThenExcute} from '.
 
 const defaultTextWitdh	 = '100px';
 const defaultHeight		 = '40px';
-
-const CheckType = {
-	CHECK	: true,
-	UNCHECK : false
-}
-
 const defaultTableClass = ['table','table-bordered', 'table-hover'];
 
 export const DataType = {
@@ -178,16 +172,92 @@ export const GRID_MSG = {
 	DELETE	: '삭제'
 }
 
+export class SelectInfo{
+	private _options: Map<string, OptionInfo[]> = new Map<string, OptionInfo[]>();
+	private _emptyOpt: boolean = false;
+
+	get options(){
+		return this._options;
+	}
+
+	get emptyOpt(){
+		return this._emptyOpt;
+	}
+
+	set emptyOpt(emptyOpt: boolean){
+		this._emptyOpt = emptyOpt;
+	}
+
+	public optionInfoList(cellId:string): OptionInfo[]{
+		if(!this._options.has(cellId)){
+			const opts = [] as OptionInfo[];
+			this._options.set(cellId, opts);
+		}
+
+		return this._options.get(cellId) as OptionInfo[];
+	}
+
+	public addOptions(cellId:string, opt: OptionInfo){
+		this.optionInfoList(cellId).push(opt);
+	}
+
+	public createSelectBox(cellId: string): HTMLSelectElement{
+		let selectBox = mkElmt('SELECT') as HTMLSelectElement
+
+		if(this.emptyOpt){
+			let totalOpt = mkElmt('OPTION') as HTMLOptionElement;
+			totalOpt.text = '';
+			totalOpt.value = '';
+			selectBox.options.add(totalOpt);
+		}
+
+		this.optionInfoList(cellId).forEach((option: OptionInfo)=>{
+			let opt = option.createOption();
+			selectBox.options.add(opt);
+		});
+
+		return selectBox;
+	}
+}
+
+export class OptionInfo{
+	private _value: string = "";
+	private _text: string = "";
+
+	get value(){
+		return this._value;
+	}
+
+	set value(value: string){
+		this._value = value;
+	}
+
+	get text(){
+		return this._text;
+	}
+
+	set text(text: string){
+		this._text = text;
+	}
+
+	public createOption(): HTMLOptionElement{
+		const opt = mkElmt('OPTION') as HTMLOptionElement;
+		opt.text = this.text;
+		opt.value = this.value
+		return opt;
+	}
+}
+
 export class TableBuilder{
 	idToIndex: Map<string, number> = new Map<string, number>();;
 	headTxts: string[][] = [];
 	headers: HeaderInfo[] = [];
 	parentId: string;
+	selectInfo: SelectInfo = new SelectInfo();
 
 	constructor(_parentId:string){
 		this.parentId = _parentId;
 	}
-
 	
 	getIdToIndex(){
 		return this.idToIndex;
@@ -304,12 +374,12 @@ export class TableBuilder{
 						th.style.verticalAlign = 'middle';
 						th.classList.add('th');
 						if(headTxt == 'chkbox'){
-							var checkbox = mkElmt('INPUT') as HTMLInputElement;
+							let checkbox = mkElmt('INPUT') as HTMLInputElement;
 							checkbox.type = 'CHECKBOX';
 							checkbox.onclick = allCheck;
 						}else{
-							var input = mkElmt('INPUT') as HTMLInputElement|HTMLLabelElement;
-							var dataType = self.getCellTypeByIndex(colIdx);
+							let input = mkElmt('INPUT') as HTMLInputElement|HTMLLabelElement|HTMLSelectElement;
+							let dataType = self.getCellTypeByIndex(colIdx);
 							if(dataType == DataType.HIDDEN){
 								input = input as HTMLInputElement
 								input.type = 'TEXT';
@@ -378,8 +448,7 @@ export class TableBuilder{
 		var cell = row.insertCell(idx) as HTMLTableCellElement;
 		cell.style.alignContent= "center";
 		cell.style.width = header.getWidth();
-		var child = mkElmt('INPUT') as HTMLInputElement;
-		this.setType(child, header);
+		let child = this.setType(header);
 		this.setAlign(header, cell, child);
 		this.setValue(child, header, data);
 		cell.appendChild(child);
@@ -389,22 +458,36 @@ export class TableBuilder{
 		}
 	}
 	
-	public setType(child: HTMLElement, header: HeaderInfo){
+	public setType(header: HeaderInfo){
 		var dataType = header.getDtType();
 		if(dataType == DataType.HIDDEN){
-			(child as HTMLInputElement).type = 'HIDDEN';
+			const child = mkElmt('INPUT') as HTMLInputElement
+			child.type = 'HIDDEN';
+			return child;
 		}else if(dataType == DataType.READ_ONLY){
+			const child = mkElmt('INPUT') as HTMLInputElement
 			child.setAttribute("disabled","disabled");
+			return child;
 		}else if(dataType == DataType.TEXTAREA){
-			child = mkElmt('TEXTAREA') as HTMLTextAreaElement;
+			const child = mkElmt('TEXTAREA') as HTMLTextAreaElement;
+			return child;
 		}else if(dataType == DataType.CHECK){
-			(child as HTMLInputElement).type = 'CHECKBOX';
-			(child as HTMLInputElement).value = "0";
-			(child as HTMLInputElement).checked = false;
+			const child = mkElmt('INPUT') as HTMLInputElement
+			child.type = 'CHECKBOX';
+			child.value = "0";
+			child.checked = false;
+			return child;
 		}else if(dataType == DataType.BUTTON){
-			(child as HTMLInputElement).type	= 'BUTTON';
+			const child = mkElmt('INPUT') as HTMLInputElement
+			child.type	= 'BUTTON';
+			return child;
+		}else if(dataType == DataType.SELECT){
+			const child = this.createSelectBox(header.getColId()) as HTMLSelectElement;
+			return child;
 		}else{
-			(child as HTMLInputElement).type = 'TEXT';
+			const child = mkElmt('INPUT') as HTMLInputElement
+			child.type = 'TEXT';
+			return child;
 		}
 	}
 	
@@ -420,11 +503,11 @@ export class TableBuilder{
 		}
 	}
 	
-	public setValue(child: HTMLInputElement, header: HeaderInfo, data: any){
+	public setValue(child: HTMLElement, header: HeaderInfo, data: any){
 		var id = header.getColId();
 		var rowCnt = this.getRows().length;
 		if(id == 'no'){
-			child.value = rowCnt+"";
+			(child as HTMLInputElement).value = rowCnt+"";
 		}else{
 			var value = data[id];
 			if(isEmpty(value)){
@@ -432,14 +515,24 @@ export class TableBuilder{
 			}else{
 				if(header.getDtType() == DataType.CHECK){
 					if(value == 1){
-						child.checked = true;
+						(child as HTMLInputElement).checked = true;
 					}else{
-						child.checked = false;
+						(child as HTMLInputElement).checked = false;
 						value == 0;
 					}
 				}
+				
+				if(header.getDtType() == DataType.SELECT){
+					var length = (child as HTMLSelectElement).options.length;
+					for(var i = 0; i < length; i++){
+						if((child as HTMLSelectElement).options[i].value == value){
+							(child as HTMLSelectElement).options[i].selected = true;
+						}
+					}
+				}else{
+					(child as HTMLInputElement).value = value;
+				}
 			}
-			child.value = value;
 		}
 		child.style.width = header.getWidth() == '*' || header.getWidth() == '' || header.getWidth() == null ? '100%': header.getWidth();
 	}
@@ -739,5 +832,20 @@ export class TableBuilder{
 	 */
 	public deleteRow(rowIdx: number): void{
 		this.getTbody().deleteRow(rowIdx);
+	}
+	/**
+		작성자	: gyuil
+		목적		: 선택박스의 옵션을 추가
+	 */
+	public addSelectOptions(cellId: string, opt: OptionInfo){
+		this.selectInfo.addOptions(cellId, opt);
+	}
+
+	public createSelectBox(cellId: string): HTMLSelectElement{
+		return this.selectInfo.createSelectBox(cellId);
+	}
+
+	public setEmptyOption(){
+		this.selectInfo.emptyOpt = true;
 	}
 }

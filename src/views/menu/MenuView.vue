@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { isNotEmpty, isEmpty} from '@/utils/common'
-import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder } from '@/utils/tableBuilder';
+import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder , OptionInfo} from '@/utils/tableBuilder';
 import { onMounted } from 'vue';
 import CommonHeader from '@/components/common/header/CommonHeader.vue';
 import BaseTable from '@/components/table/BaseTable.vue';
@@ -47,8 +47,12 @@ const get = () =>{
 			if(isNotEmpty(grid.getCellValueById(idx, 'menuCd'))){
 				grid.disabledCellById(idx, 'menuCd');
 			};
-			
+
 			grid.addEventRow(idx, 'keydown', function(){
+				grid.setCellValueById(idx, 'status', GRID_MSG.UPDATE);
+			});
+
+			grid.addEventRow(idx, 'change', function(){
 				grid.setCellValueById(idx, 'status', GRID_MSG.UPDATE);
 			});
 		}
@@ -58,47 +62,46 @@ const get = () =>{
 }
 
 const buildGrid = () => {
-	let headerInfo = [];
-	let headerList = function(text: string){
-		let head = [] as string[];
-		if(isNotEmpty(text)){
-			let heads = text.split(',');
-			heads.forEach(function(headTxt){
-				head.push(headTxt);
-			});
-		}
-		return head;
-	}
+	let headerInfo = [
+		['no','','상태','메뉴','#cspan','#cspan','url','사용여부','정렬순번'],
+		['#rspan','#rspan','#rspan','상위메뉴코드','메뉴코드','메뉴명','#rspan','#rspan','#rspan']
+	];
 	
-	headerInfo.push(headerList('no,,상태,메뉴,#cspan,#cspan,url,사용여부,정렬순번'));
-	headerInfo.push(headerList('#rspan,#rspan,#rspan,상위메뉴코드,메뉴코드,메뉴명,#rspan,#rspan,#rspan'));
-	
-	let createHeaderInfo = function(colId: string, width: string, dtType: string, colIdx: number, align: string){
+	let headers = [
+		{colId: 'no', width: '50px', dtType: DataType.READ_ONLY, align: ALIGN.CENTER},
+		{colId: 'chkbox', width: '50px', dtType: DataType.CHECK, align: ALIGN.CENTER},
+		{colId: 'status', width: '50px', dtType: DataType.READ_ONLY, align: ALIGN.CENTER},
+		{colId: 'upMenuCd', width: '120px', dtType: DataType.TEXT, align: ALIGN.LEFT},
+		{colId: 'menuCd', width: '100px', dtType: DataType.TEXT, align: ALIGN.LEFT},
+		{colId: 'menuName', width: '200px', dtType: DataType.TEXT, align: ALIGN.LEFT},
+		{colId: 'url', width: '300px', dtType: DataType.TEXT, align: ALIGN.LEFT},
+		{colId: 'useYn', width: '100px', dtType: DataType.SELECT, align: ALIGN.CENTER},
+		{colId: 'useYn', width: '100px', dtType: DataType.TEXT, align: ALIGN.CENTER}
+	].map((head, idx) => {
 		return new HeaderInfoBuilder()
-					.setColId(colId)
-					.setWidth(width)
-					.setDateType(dtType)
-					.setColIdx(colIdx)
-					.setAlign(align)
-					.build();
-	}
-	
-	let headers = [];
-	let colIndex = 0;
-	headers.push(createHeaderInfo(	      'no',		 '50px',     DataType.READ_ONLY, colIndex++, ALIGN.CENTER));
-	headers.push(createHeaderInfo(	  'chkbox',		 '50px',	 DataType.CHECK,     colIndex++, ALIGN.CENTER));
-	headers.push(createHeaderInfo(	  'status',		 '50px',     DataType.READ_ONLY, colIndex++, ALIGN.CENTER));
-	headers.push(createHeaderInfo(	'upMenuCd',		'120px',	 DataType.TEXT,      colIndex++, ALIGN.LEFT));
-	headers.push(createHeaderInfo(	  'menuCd',		'100px',	 DataType.TEXT,      colIndex++, ALIGN.LEFT));
-	headers.push(createHeaderInfo(	'menuName',		'200px',	 DataType.TEXT,      colIndex++, ALIGN.LEFT));
-	headers.push(createHeaderInfo(		 'url',		'300px',	 DataType.TEXT,      colIndex++, ALIGN.LEFT));
-	headers.push(createHeaderInfo(	   'useYn',		'100px',	 DataType.TEXT,      colIndex++, ALIGN.CENTER));
-	headers.push(createHeaderInfo(	 'sortSeq',		'100px',	 DataType.TEXT,      colIndex++, ALIGN.CENTER));
+					.setColId(head.colId)
+					.setWidth(head.width)
+					.setDateType(head.dtType)
+					.setColIdx(idx)
+					.setAlign(head.align)
+					.build()
+	});
 	
 	let grid = state.grid;
 	grid.setGridId(gridId)
 	grid.setHeadText(headerInfo);
-	grid.setHeaders(headers)
+	grid.setHeaders(headers);
+	
+	[
+		{text: 'Yes', value: 'Y'},
+		{text: 'No', value: 'N'}
+	].forEach((item)=>{
+		const opt = new OptionInfo();
+		opt.text = item.text;
+		opt.value = item.value;
+		grid.addSelectOptions('useYn', opt);
+	});
+
 	grid.build();	
 }
 
