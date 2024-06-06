@@ -76,7 +76,7 @@ const buildGrid = () => {
 		{colId: 'menuName', width: '200px', dtType: DataType.TEXT, align: ALIGN.LEFT},
 		{colId: 'url', width: '300px', dtType: DataType.TEXT, align: ALIGN.LEFT},
 		{colId: 'useYn', width: '100px', dtType: DataType.SELECT, align: ALIGN.CENTER},
-		{colId: 'useYn', width: '100px', dtType: DataType.TEXT, align: ALIGN.CENTER}
+		{colId: 'sortSeq', width: '100px', dtType: DataType.TEXT, align: ALIGN.CENTER}
 	].map((head, idx) => {
 		return new HeaderInfoBuilder()
 					.setColId(head.colId)
