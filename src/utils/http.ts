@@ -156,7 +156,7 @@ export class Http{
 
 	public setToken(_token: string){
 		let token = isNotEmpty(_token)? _token.trim() : '';
-		this.addHeader('Authorization', +"Bearer "+ token);
+		this.addHeader('Authorization', "Bearer "+ token);
 	}
 }
 
