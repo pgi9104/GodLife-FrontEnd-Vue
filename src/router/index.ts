@@ -9,6 +9,7 @@ import PostgresView from '@/views/script/database/PostgresView.vue'
 import MysqlView from '@/views/script/database/MysqlView.vue'
 import ProjectView from '@/views/project/ProjectView.vue'
 import CommonCodeView from '@/views/sys/comm/code/CommonCodeView.vue'
+import DdlView from '@/views/project/ddl/DdlView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,11 @@ const router = createRouter({
       path: '/sys/program/project',
       name: 'Project',
       component: ProjectView
+    },
+    {
+      path: '/ddl',
+      name: 'ddl',
+      component: DdlView
     }
   ]
 })
