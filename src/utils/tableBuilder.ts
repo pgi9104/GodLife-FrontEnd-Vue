@@ -372,6 +372,7 @@ export class TableBuilder{
 						th.style.width = colInfo[colIdx].getWidth();
 						th.style.height = '90%';
 						th.style.verticalAlign = 'middle';
+						th.style.fontSize = '12px';
 						th.classList.add('th');
 						if(headTxt == 'chkbox'){
 							let checkbox = mkElmt('INPUT') as HTMLInputElement;
@@ -400,7 +401,8 @@ export class TableBuilder{
 							input.style.width = '100%';
 							input.style.margin = 'auto';
 							input.style.padding = 'auto';
-							self.setAlign(colInfo[colIdx], th, input);
+							//self.setAlign(colInfo[colIdx], th, input);
+							th.style.textAlign = "center";
 							th.appendChild(input);
 						}
 						headers[colIdx] = th;
