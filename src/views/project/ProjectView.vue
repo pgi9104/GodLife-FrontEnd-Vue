@@ -10,13 +10,15 @@
 </style>
 
 <script setup lang="ts">
-import { isNotEmpty, isEmpty } from '@/utils/common'
+import { isNotEmpty, isEmpty, getId } from '@/utils/common'
 import { ALIGN, DataType, GRID_MSG, HeaderInfoBuilder, TableBuilder } from '@/utils/tableBuilder';
 import CommonHeader from '@/components/common/header/CommonHeader.vue';
 import BaseTable from '@/components/table/BaseTable.vue';
 import { onMounted, reactive } from 'vue';
 import { Http, callAPI } from '@/utils/http';
+import { useTokenStore } from '@/stores/tokenStore';
 
+const store = useTokenStore();
 const gridId = 'projectGrid';
 
 const state = reactive({
@@ -30,6 +32,7 @@ const state = reactive({
 const getApi = () => {
 	let api = new Http();
 	api.setUrl(state.authServer+"/api/project");
+	api.setToken(store.storeToken);
 	api.setSuccess((data:any)=>{
 		state.saveAPI = data._links.save;
 		state.listAPI = data._links.list;
@@ -45,6 +48,7 @@ const get = () => {
 	http.setParam(null);
 	http.setUrl(state.listAPI.href);
 	http.method(state.listAPI.type);
+	http.setToken(store.storeToken);
 	let grid = state.grid;
 	http.setSuccess(function(data: any){
 		console.log(data);
@@ -198,6 +202,7 @@ const save = () => {
 		let http = new Http();
 		http.setParam(param);
 		http.setUrl(state.saveAPI.href);
+		http.setToken(store.storeToken);
 		http.contentTypeJson();
 		http.method(state.saveAPI.type);
 		http.setSuccess(function(){
