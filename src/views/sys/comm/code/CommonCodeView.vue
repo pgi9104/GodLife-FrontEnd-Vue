@@ -35,8 +35,6 @@ const gridId = 'commonCodeGrid';
 const gridDetailId = 'commonCodeDetailGrid';
 const modalId = 'modalId';
 
-console.log("tokenCheck: "+store.$state.storeToken);
-
 const initdata = {
 	menuName: '',
 	menuDetailName: '',

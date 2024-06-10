@@ -14,11 +14,11 @@ class userService {
       url: import.meta.env.VITE_APP_AUTH_URI+'/api/userinfo',
       headers: {
         "Content-type": "application/json",
-        "Authorization": useTokenStore().storeToken?.getToken(),
+        "Authorization": "Bearer "+useTokenStore().storeToken,
       },
     })
     .then((res) => {
-      console.log(res.data);
+      //console.log(res.data);
       let user = res.data;
       let userId: string = user.userId;
       let username: string = user.username;
