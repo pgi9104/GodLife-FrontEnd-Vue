@@ -13,7 +13,7 @@ const props = defineProps(['add','get','save','del', 'menuName']);
       <label>{{ menuName }}</label>
     </div>
     <div class="col-6 right-box">
-      <input type="text" :on-keydown="get"/>
+      <input type="text" id="searchTxt" :on-keydown="get"/>
       <BtnGet :onclick=get></BtnGet>
       <BtnAdd :onclick=add></BtnAdd>
       <BtnDel :onclick=del></BtnDel>
