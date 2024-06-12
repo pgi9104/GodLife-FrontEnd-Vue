@@ -74,7 +74,7 @@ const getApi = () =>{
 	http.setUrl(initdata.authServer+'/sys/api/code');
 	http.get();
 	http.contentTypeJson();
-	http.addHeader("Authorization", "Bearer "+store.$state.storeToken);
+	http.addHeader("Authorization", "Bearer "+store.storeToken);
 	http.setSuccess(function(res: any){
 		//console.log(res);
 		initdata.menuName = res.data.menuName;
@@ -95,7 +95,7 @@ const get = () =>{
 	http.setUrl(initdata.linkGetListUrl.href);
 	http.method(initdata.linkGetListUrl.type);
 	http.setContentType(initdata.linkGetListUrl.media);
-	http.addHeader("Authorization", "Bearer "+store.$state.storeToken);
+	http.addHeader("Authorization", "Bearer "+store.storeToken);
 	http.setSuccess(function(data: any){
 		console.log(data);
 		grid.clear();
@@ -270,7 +270,7 @@ const save = () => {
 		http.setUrl(initdata.linkSaveListUrl.href);
 		http.contentTypeJson();
 		http.method(initdata.linkSaveListUrl.type);
-		http.addHeader("Authorization", "Bearer "+store.$state.storeToken);
+		http.addHeader("Authorization", "Bearer "+store.storeToken);
 		http.setSuccess(function(){
 			get();
 		});
@@ -295,7 +295,7 @@ const getModal = (url: any) =>{
 	http.setUrl(url.href);
 	http.method(url.type);
 	http.setContentType(url.media);
-	http.addHeader("Authorization", "Bearer "+store.$state.storeToken);
+	http.addHeader("Authorization", "Bearer "+store.storeToken);
 	http.setSuccess(function(res: any){
 		console.log(res);
 		grid.clear();
