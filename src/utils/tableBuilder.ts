@@ -27,6 +27,19 @@ export const ALIGN = {
 	RIGHT	: "RIGHT"
 }
 
+export const SORT = {
+	DESC: "desc",
+	ASC: "asc",
+	NONE: "none",
+}
+
+export const DATA_CLASS = {
+	STRING: "str",
+	DATE: "date",
+	NUMBER: "num",
+	NONE: "none",
+}
+
 const defaultDataType  	 = DataType.TEXT;
 const cspan = '#cspan';
 const rspan = '#rspan';
@@ -38,6 +51,8 @@ export class HeaderInfo{
 	private _dtType: string = DataType.TEXT;
 	private _colIdx: number = -1;
 	private _align: string = ALIGN.CENTER;
+	private _sort: string = SORT.NONE;
+	private _dataClass: string = DATA_CLASS.NONE;
 
 	constructor(){}
 
@@ -92,6 +107,22 @@ export class HeaderInfo{
 	public setAlign(align: string): void{
 		this._align = align;
 	}
+
+	get sort(): string{
+		return this._sort;
+	}
+
+	set sort(sort:string){
+		this._sort = sort;
+	}
+
+	get dataClass(): string{
+		return this._dataClass;
+	}
+
+	set dataClass(dataClass: string){
+		this._dataClass = dataClass;
+	}
 }
 
 export class HeaderInfoBuilder{
@@ -101,6 +132,8 @@ export class HeaderInfoBuilder{
 	private dtType: string = DataType.TEXT;
 	private colIdx: number = -1;
 	private align: string = ALIGN.CENTER;
+	private sort: string = SORT.NONE;
+	private dataClass: string = DATA_CLASS.NONE;
 
 	public setColId(id: string){
 		if(isNotEmpty(id)){
@@ -152,14 +185,26 @@ export class HeaderInfoBuilder{
 		return this;
 	}
 
+	public setDataClass(dataClass: string){
+		this.dataClass = dataClass;
+		return this;
+	}
+
+	public setSort(sort:string){
+		this.sort = sort;
+		return this;
+	}
+
 	public build(): HeaderInfo {
-		var info = new HeaderInfo() as HeaderInfo;
+		let info = new HeaderInfo() as HeaderInfo;
 		info.setColId(this.colId);
 		info.setColIdx(this.colIdx);
 		info.setAlign(this.align);
 		info.setDtType(this.dtType);
 		info.setWidth(this.width);
 		info.setHeight(this.height);
+		info.sort = this.sort;
+		info.dataClass = this.dataClass;
 
 		return info;
 	}
@@ -276,7 +321,7 @@ export class TableBuilder{
 	}
 
 	public clear(){
-		var tbody = this.getTbody();
+		let tbody = this.getTbody();
 		tbody.innerHTML = '';
 		return this;
 	}
@@ -287,7 +332,7 @@ export class TableBuilder{
 	}
 
 	public setIdToIndex (_headers: HeaderInfo[]){
-		var self = this;
+		let self = this;
 		_headers.forEach(function(headInfo){
 			self.getIdToIndex().set(headInfo.getColId(), headInfo.getColIdx());
 		});
@@ -308,7 +353,7 @@ export class TableBuilder{
 
 	public setHeadText(_headerText: string[][]){
 		if(isNotEmpty(_headerText) && Array.isArray(_headerText) && _headerText.length > 0){
-			var firstRow = _headerText[0];
+			let firstRow = _headerText[0];
 			if(isNotEmpty(firstRow) && Array.isArray(firstRow)){
 				this.headTxts = _headerText;
 			}
@@ -317,58 +362,58 @@ export class TableBuilder{
 	}
 
 	public build() {
-		var table = mkElmt('TABLE') as HTMLTableElement;
+		let table = mkElmt('TABLE') as HTMLTableElement;
 		
-		var tHead = mkElmt('THEAD');
-		var tBody = mkElmt('TBODY');
-		var tFoot = mkElmt('TFOOT');
+		let tHead = mkElmt('THEAD');
+		let tBody = mkElmt('TBODY');
+		let tFoot = mkElmt('TFOOT');
 		table.appendChild(tHead);
 		table.appendChild(tBody);
 		table.appendChild(tFoot);
 		defaultTableClass.forEach(function(_class){
 			table.classList.add(_class);
 		});
-		var parentElement = document.getElementById(this.getParentId()) as HTMLElement;
+		let parentElement = document.getElementById(this.getParentId()) as HTMLElement;
 		parentElement.appendChild(table);
 		this.setHeader();
 		return this;
 	}
 
 	public setHeader(){
-		var headerInfo = this.getHeadTxts();
-		var colInfo = this.getHeaders();
-		var tHead = this.getTHead() as HTMLTableSectionElement;
-		var ths = [] as HTMLTableCellElement[][];
-		var self = this;
+		let headerInfo = this.getHeadTxts();
+		let colInfo = this.getHeaders();
+		let tHead = this.getTHead() as HTMLTableSectionElement;
+		let ths = [] as HTMLTableCellElement[][];
+		let self = this;
 		//유효성체크
 		if(isNotEmpty(tHead) && isNotEmpty(headerInfo) && isNotEmpty(colInfo)){
 			headerInfo.forEach(function(headList, rowIdx){
-				var headers = [] as HTMLTableCellElement[];
+				let headers = [] as HTMLTableCellElement[];
 				headList.forEach(function (headTxt, colIdx){
-					var isCspan = equalsThenExcute(headTxt, cspan, function(){
+					let isCspan = equalsThenExcute(headTxt, cspan, function(){
 						let beforeCell = headers[headers.length - 1] as HTMLTableCellElement;
 						let colSpan:number = beforeCell.colSpan;
 						beforeCell.colSpan = colSpan + 1;
 					});
 					
-					var isRspan = equalsThenExcute(headTxt, rspan, function(){
+					let isRspan = equalsThenExcute(headTxt, rspan, function(){
 						let beforeRowCell = ths[rowIdx-1][colIdx];
 						let rowSpan:number = beforeRowCell.rowSpan;
 						beforeRowCell.rowSpan = rowSpan + 1;
 					});
 					
-					var allCheck = function(){
-						var rows = self.getRows();
+					let allCheck = function(){
+						let rows = self.getRows();
 
-						for(var rowIdx = 0; rowIdx < rows.length; rowIdx++){
-							var checkbox = self.getCellChild(rowIdx, colIdx) as HTMLInputElement;
-							var value = (headers[colIdx].children[0] as HTMLInputElement).checked;
+						for(let rowIdx = 0; rowIdx < rows.length; rowIdx++){
+							let checkbox = self.getCellChild(rowIdx, colIdx) as HTMLInputElement;
+							let value = (headers[colIdx].children[0] as HTMLInputElement).checked;
 							checkbox.checked = value;
 						}
 					};
-					
+
 					if(!isCspan && !isRspan){
-						var th = mkElmt('TH') as HTMLTableCellElement;
+						let th = mkElmt('TH') as HTMLTableCellElement;
 						th.style.width = colInfo[colIdx].getWidth();
 						th.style.height = '90%';
 						th.style.verticalAlign = 'middle';
@@ -382,13 +427,13 @@ export class TableBuilder{
 							let input = mkElmt('INPUT') as HTMLInputElement|HTMLLabelElement|HTMLSelectElement;
 							let dataType = self.getCellTypeByIndex(colIdx);
 							if(dataType == DataType.HIDDEN){
-								input = input as HTMLInputElement
+								input = input as HTMLInputElement;
 								input.type = 'TEXT';
 								input.value = headTxt;
 								input.setAttribute("disabled", 'disabled');
 								th.hidden = true;
 							}else if(dataType == DataType.CHECK){
-								input = input as HTMLInputElement
+								input = input as HTMLInputElement;
 								input.type = 'CHECKBOX';
 								input.onclick = allCheck;
 							}else{
@@ -396,6 +441,81 @@ export class TableBuilder{
 								input.textContent = headTxt;
 								th.appendChild(input);
 								th.hidden = false;
+								let isOn = colInfo[colIdx].sort === SORT.ASC || colInfo[colIdx].sort === SORT.DESC;
+								if(isOn){
+									th.classList.add("sortOff");
+								}
+
+								th.onclick = () =>{
+									if(isOn){
+										const colInfoItem = colInfo[colIdx];
+										let sortType = colInfoItem.sort;
+										const rows = self.getRows();
+										const tbody = self.getTbody();
+										const dataClass = colInfoItem.dataClass;
+										const sortList = [];
+
+										// 행을 정렬 목록에 추가합니다
+										for (let rowIdx = 0; rowIdx < rows.length; rowIdx++) {
+											sortList.push({
+												value: self.getCellValue(rowIdx, colIdx),
+												row: rows[rowIdx]
+											});
+										}
+
+										// 정렬 수행
+										sortList.sort((a, b) => {
+											let aValue = a.value as Number|string;
+											let bValue = b.value as Number|string;
+
+											if (dataClass === DATA_CLASS.NUMBER) {
+												aValue = Number(aValue);
+												bValue = Number(bValue);
+											} else if (dataClass === DATA_CLASS.DATE) {
+												aValue = new Date(aValue as string).getTime();
+												bValue = new Date(bValue as string).getTime();
+											}
+
+											if (sortType === SORT.ASC) {
+												return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+											} else {
+												return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+											}
+										});
+
+										// 기존 행들을 모두 제거하고 정렬된 행들을 한 번에 추가합니다
+										tbody.innerHTML = "";
+										sortList.forEach(item => tbody.appendChild(item.row));
+
+										let hd =self.getTHead() as HTMLTableSectionElement;
+										let rowList = hd.rows;
+										for(let rIdx = 0; rIdx < rowList.length; rIdx++){
+											let row = (rowList[rIdx] as HTMLTableRowElement);
+											for(let cIdx = 0; cIdx < row.cells.length; cIdx++){
+												let classList = row.cells[cIdx].classList;
+												const isSortOn = colInfo[cIdx].sort == SORT.ASC || colInfo[cIdx].sort == SORT.DESC;
+												if(cIdx == colIdx){
+													if(isSortOn){
+														classList.add("sortOn");
+													} else {
+														classList.remove("sortOn");
+													}
+													classList.remove("sortOff");
+												} else {
+													if(isSortOn){
+														classList.add("sortOff");
+													} else {
+														classList.remove("sortOff");
+													}
+													classList.remove("sortOn");
+												}
+											}
+										}
+
+										// 정렬 순서를 토글합니다
+										colInfo[colIdx].sort = sortType === SORT.ASC ? SORT.DESC : (sortType == SORT.NONE)? SORT.NONE :SORT.ASC;
+									}
+								}
 							}
 							
 							input.style.width = '100%';
@@ -413,7 +533,7 @@ export class TableBuilder{
 		}
 		//헤더 셋팅
 		ths.forEach((item, index)=>{
-			var tr = mkElmt('TR');
+			let tr = mkElmt('TR');
 			ths[index].forEach((y, tidx)=>{
 				tr.appendChild(ths[index][tidx]);				
 			})
@@ -426,15 +546,15 @@ export class TableBuilder{
 	}
 
 	public remakeFromJSONListToData(data:[]){
-		var builder = this;
+		let builder = this;
 		data.forEach(function(item){
 			builder.addRowData(item);
 		});
 	}
 		
 	public makeTree(data: any){
-		var row = (this.getTbody() as HTMLTableSectionElement).insertRow(-1) as HTMLTableRowElement;
-		var self = this;
+		let row = (this.getTbody() as HTMLTableSectionElement).insertRow(-1) as HTMLTableRowElement;
+		let self = this;
 
 		this.getHeaders().forEach(function(header, idx){
 			self.setCell(header, idx, row, data);
@@ -447,7 +567,7 @@ export class TableBuilder{
 	}
 	
 	public setCell(header: HeaderInfo, idx: number, row: HTMLTableRowElement, data: any){
-		var cell = row.insertCell(idx) as HTMLTableCellElement;
+		let cell = row.insertCell(idx) as HTMLTableCellElement;
 		cell.style.alignContent= "center";
 		cell.style.width = header.getWidth();
 		let child = this.setType(header);
@@ -461,7 +581,7 @@ export class TableBuilder{
 	}
 	
 	public setType(header: HeaderInfo){
-		var dataType = header.getDtType();
+		let dataType = header.getDtType();
 		if(dataType == DataType.HIDDEN){
 			const child = mkElmt('INPUT') as HTMLInputElement
 			child.type = 'HIDDEN';
@@ -494,7 +614,7 @@ export class TableBuilder{
 	}
 	
 	public setAlign (header: HeaderInfo, cell: HTMLTableCellElement, child: HTMLElement){
-		var align = header.getAlign();
+		let align = header.getAlign();
 		cell.style.alignContent = 'center';
 		if(align == ALIGN.LEFT){
 			child.style.textAlign = "start";
@@ -506,12 +626,12 @@ export class TableBuilder{
 	}
 	
 	public setValue(child: HTMLElement, header: HeaderInfo, data: any){
-		var id = header.getColId();
-		var rowCnt = this.getRows().length;
+		let id = header.getColId();
+		let rowCnt = this.getRows().length;
 		if(id == 'no'){
 			(child as HTMLInputElement).value = rowCnt+"";
 		}else{
-			var value = data[id];
+			let value = data[id];
 			if(isEmpty(value)){
 				value = '';
 			}else{
@@ -525,8 +645,8 @@ export class TableBuilder{
 				}
 				
 				if(header.getDtType() == DataType.SELECT){
-					var length = (child as HTMLSelectElement).options.length;
-					for(var i = 0; i < length; i++){
+					let length = (child as HTMLSelectElement).options.length;
+					for(let i = 0; i < length; i++){
 						if((child as HTMLSelectElement).options[i].value == value){
 							(child as HTMLSelectElement).options[i].selected = true;
 						}
@@ -606,9 +726,9 @@ export class TableBuilder{
 	}
 	
 	public getRowData(rowIdx: number): any{
-		var data = {} as any;
-		var cells = this.getCells(rowIdx);
-		for(var cell of cells){
+		let data = {} as any;
+		let cells = this.getCells(rowIdx);
+		for(let cell of cells){
 			let c = (cell as HTMLTableCellElement);
 			data[this.getColId(c.cellIndex)] = this.getCellValue(rowIdx, c.cellIndex);
 		};
@@ -624,8 +744,8 @@ export class TableBuilder{
 	}
 	
 	public addRowData(item: any): void{
-		var tr = this.getTbody().insertRow(-1);
-		var builder = this;
+		let tr = this.getTbody().insertRow(-1);
+		let builder = this;
 		this.getHeaders().forEach(function(col){
 			builder.setCell(col, col.getColIdx(), tr, item);
 		});
@@ -748,9 +868,9 @@ export class TableBuilder{
 		}
 	 */
 	public addEventRow(rowIdx: number, type: string, fn: any | null){
-		var cells = this.getCells(rowIdx);
+		let cells = this.getCells(rowIdx);
 		
-		for(var i = 0; i < cells.length; i++ ){
+		for(let i = 0; i < cells.length; i++ ){
 			(cells[i].lastChild as HTMLInputElement|HTMLTextAreaElement).addEventListener(type, fn);
 		}
 	}
@@ -766,7 +886,7 @@ export class TableBuilder{
 		}
 	 */
 	public getBtnById(rowIdx: number, cellId: string, btnName: string, fn: any):void{
-		var cell = this.getBtn(rowIdx, this.getIdToIndex().get(cellId) as number, btnName, fn);
+		let cell = this.getBtn(rowIdx, this.getIdToIndex().get(cellId) as number, btnName, fn);
 	}
 	
 	/**
@@ -780,7 +900,7 @@ export class TableBuilder{
 		}
 	 */
 	public getBtn(rowIdx: number, cellIdx: number, btnName: string, fn: any): void{
-		var btn = this.getCellChild(rowIdx,cellIdx) as HTMLInputElement;
+		let btn = this.getCellChild(rowIdx,cellIdx) as HTMLInputElement;
 		if(isEmpty(btn)){
 			btn = mkElmt('INPUT') as HTMLInputElement;
 		}
@@ -801,7 +921,7 @@ export class TableBuilder{
 		}
 	 */	
 	public getBtnPopById(rowIdx: number, cellId: string, btnName:string, fn: any): void{
-		var cell = this.getBtnPop(rowIdx, this.getIdToIndex().get(cellId) as number, btnName, fn);
+		let cell = this.getBtnPop(rowIdx, this.getIdToIndex().get(cellId) as number, btnName, fn);
 	}
 	
 	/**
@@ -815,7 +935,7 @@ export class TableBuilder{
 		}
 	 */
 	public getBtnPop(rowIdx: number, cellIdx: number, btnName: string, fn: any): void{
-		var btn = this.getCellChild(rowIdx,cellIdx) as HTMLInputElement;
+		let btn = this.getCellChild(rowIdx,cellIdx) as HTMLInputElement;
 		if(isEmpty(btn)){
 			btn = mkElmt('INPUT')  as HTMLInputElement;
 		}

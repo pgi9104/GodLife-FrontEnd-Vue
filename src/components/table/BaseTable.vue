@@ -3,12 +3,13 @@ const props = defineProps(['gridId']);
 </script>
 
 <template>
-  <div class="gridTb" :id="gridId">
+  <div class="container gridTb" :id="gridId">
   </div>
 </template>
 
 <style>
-.gridTb {
+.gridTb{
   overflow-x: auto;
+  max-height: 70vh;
 }
 </style>
