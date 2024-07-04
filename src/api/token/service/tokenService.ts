@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const tokenApi = axios.create({
-  baseURL: process.env.VUE_APP_AUTH_URI,        // API 기본 호출 url
+  baseURL: import.meta.env.VITE_APP_AUTH_URI,        // API 기본 호출 url
   timeout: 10 * 3000,                           // 10초 동안 요청 후 에러 처리
   headers: {
     "Content-type": "application/json",
