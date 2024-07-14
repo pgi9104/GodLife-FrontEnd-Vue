@@ -32,6 +32,12 @@
 	<br>
 	<BaseTable :id="gridId">
 	</BaseTable>
+	<PagingView
+		:size="size"
+		:pageNum="pageNum"
+		:totalCnt="totalCnt"
+		:showPageCnt="showPageCnt">
+	</PagingView>
 </div>
 <div id="scriptModalId" class="modal">
 	<div class="modal-content animate" style="height: 80vh;">
@@ -63,17 +69,23 @@ import { ALIGN, DataType, GRID_MSG, HeaderInfo, HeaderInfoBuilder, OptionInfo, T
 import { onMounted } from 'vue';
 import CommonHeader from '@/components/common/header/CommonHeader.vue';
 import BaseTable from '@/components/table/BaseTable.vue';
+import PagingView from '@/components/table/PagingView.vue';
 import { useTokenStore } from '@/stores/tokenStore';
 import { callAPI, Http } from '@/utils/http';
 
 const store = useTokenStore();
 const gridId = 'ddlGrid';
+const showPageCnt = 5;
+let size = 5;
+let pageNum = 1;
+let totalCnt = 50;
 
 const initdata = {
 	menuName: 'DDL 정보',
 	grid: new TableBuilder(gridId),
-	authServer: import.meta.env.VITE_APP_AUTH_URI,
+	authServer: import.meta.env.VITE_APP_AUTH_URI+'/auth-server',
 	pks: ['projectCode', 'tableName', 'tableCol'],
+	projectCodeList: [],
 	list: {
 		href: '',
 		type: '',
@@ -116,7 +128,7 @@ const getApi = () =>{
 		initdata.save = data.save;
 		initdata.script = data.script;
 		initdata.alterScript = data.alterScript;
-
+		initdata.projectCodeList = data.projectCodeSel;
 		//selectBox
 		[
 			{id: 'projectCodeSel', data: data.projectCodeSel},
@@ -178,6 +190,9 @@ const get = () =>{
 				grid.setCellValueById(idx, 'status', GRID_MSG.UPDATE);
 			});
 		}
+
+		// paging
+		totalCnt = res.data.totalCnt;
 	});
 
 	callAPI(http);
@@ -187,20 +202,21 @@ const buildGrid = () => {
 	let grid = initdata.grid;
 
 	const headerInfo =[
-		['no','','상태','프로젝트코드','테이블명','테이블컬럼','컬럼 타입','컬럼 타입 제한','NULL 여부', 'PK 여부', '기본값', '설명', '정렬 순번']
+		['no','','상태','프로젝트코드','테이블명','테이블컬럼','컬럼 타입','컬럼 타입 제한','NULL 여부', 'PK 여부', '자동 증가', '기본값', '설명', '정렬 순번']
 	];
 	
 	let headers: HeaderInfo[] = [
 		{colId: 'no', width: '50px', dtType: DataType.READ_ONLY, align: ALIGN.CENTER, sort: SORT.DESC, dataClass: DATA_CLASS.NUMBER},
 		{colId: 'chkbox', width: '20px', dtType: DataType.CHECK, align: ALIGN.CENTER, sort: SORT.NONE, dataClass: DATA_CLASS.NONE},
 		{colId: 'status', width: '50px', dtType: DataType.READ_ONLY, align: ALIGN.CENTER, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
-		{colId: 'projectCode', width: '80px', dtType: DataType.TEXT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
+		{colId: 'projectCode', width: '80px', dtType: DataType.SELECT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'tableName', width: '80px', dtType: DataType.TEXT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'tableCol', width: '80px', dtType: DataType.TEXT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'colType', width: '80px', dtType: DataType.SELECT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'colTypeLmt', width: '100px', dtType: DataType.TEXT, align: ALIGN.RIGHT, sort: SORT.NONE, dataClass: DATA_CLASS.STRING},
 		{colId: 'nullable', width: '80px', dtType: DataType.SELECT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'colPk', width: '80px', dtType: DataType.SELECT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
+		{colId: 'autoIncrease', width: '80px', dtType: DataType.SELECT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'defaultValue', width: '80px', dtType: DataType.TEXT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'comment', width: '80px', dtType: DataType.TEXT, align: ALIGN.LEFT, sort: SORT.ASC, dataClass: DATA_CLASS.STRING},
 		{colId: 'sortSeq', width: '80px', dtType: DataType.TEXT, align: ALIGN.RIGHT, sort: SORT.ASC, dataClass: DATA_CLASS.NUMBER},
@@ -221,7 +237,7 @@ const buildGrid = () => {
 		{text: 'Yes', value: '1'},
 		{text: 'No', value: '0'}
 	].forEach((item)=>{
-		['nullable','colPk'].forEach((yesNo)=>{
+		['nullable','colPk', 'autoIncrease'].forEach((yesNo)=>{
 			const opt = new OptionInfo();
 			opt.text = item.text;
 			opt.value = item.value;
@@ -238,6 +254,14 @@ const buildGrid = () => {
 		opt.value = item.value;
 		grid.addSelectOptions('colType', opt);
 	});
+
+	initdata.projectCodeList.forEach((item: any)=>{
+		const opt = new OptionInfo();
+		opt.text = item;
+		opt.value = item;
+		grid.addSelectOptions('projectCode', opt);
+	});
+
 	grid.setHeaders(headers)
 	grid.build();
 }
@@ -247,13 +271,14 @@ const add = () => {
 	param['no'] 			= initdata.grid.getRows().length+1;
 	param['chkbox'] 		= 0;
 	param['status']	 		= GRID_MSG.INSERT;
-	param['projectCode'] 	= '';
+	param['projectCode'] 	= (getId('projectCodeSel') as HTMLSelectElement).value;
 	param['tableName'] 		= '';
 	param['tableCol'] 		= '';
 	param['colType'] 		= '';
 	param['colTypeLmt'] 	= '';
 	param['nullable'] 		= '0';
 	param['colPk'] 			= '0';
+	param['autoIncrease']	= '0';
 	param['defaultValue'] 	= '';
 	param['comment'] 		= '';
 	param['sortSeq'] 		= initdata.grid.getRows().length+1;

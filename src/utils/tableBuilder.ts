@@ -363,7 +363,6 @@ export class TableBuilder{
 
 	public build() {
 		let table = mkElmt('TABLE') as HTMLTableElement;
-		
 		let tHead = mkElmt('THEAD');
 		let tBody = mkElmt('TBODY');
 		let tFoot = mkElmt('TFOOT');
@@ -518,7 +517,6 @@ export class TableBuilder{
 								}
 							}
 							
-							input.style.width = '100%';
 							input.style.margin = 'auto';
 							input.style.padding = 'auto';
 							//self.setAlign(colInfo[colIdx], th, input);

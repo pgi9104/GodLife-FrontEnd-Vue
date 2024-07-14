@@ -10,6 +10,7 @@ const props = defineProps(['gridId']);
 <style>
 .gridTb{
   overflow-x: auto;
+  overflow-y: auto;
   max-height: 70vh;
 }
 </style>
