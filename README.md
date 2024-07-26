@@ -27,6 +27,13 @@ npm create vue@latest
 ## VUE VERSION 확인
 ```
 npm list vue
+
+## 부트스트랩랩
+```
+npm install bootstrap@5
+npm install @popperjs/core
+```
+npm install boot
 ```
 ## 실행
 ```
